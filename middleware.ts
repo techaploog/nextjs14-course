@@ -12,11 +12,11 @@ const publicRoutes = [
 
 export default authMiddleware({
   publicRoutes,
-  afterAuth(auth,req,evt) {
-    if (!auth.userId && !auth.isPublicRoute) {
-      return redirectToSignIn({ returnBackUrl: req.url });
-    }
-  }
+  // afterAuth(auth,req,evt) {
+  //   if (!auth.userId && !auth.isPublicRoute) {
+  //     return redirectToSignIn({ returnBackUrl: req.url });
+  //   }
+  // }
 });
  
 export const config = {
