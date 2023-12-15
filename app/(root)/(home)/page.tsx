@@ -1,38 +1,16 @@
+import { QuestionCard } from "@/components/cards";
 import { HomeFilters } from "@/components/home";
 import { Filter } from "@/components/shared/filter";
 import { LocalSearchBar, NoResult } from "@/components/shared/search";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants";
+import { generateDummyQuestion } from "@/lib/utils/dummy_generator";
+import { TQuestionCardProps } from "@/types";
 import Link from "next/link";
 
-const questions = [
-  // {
-  //   _id: 1,
-  //   title: "title_1",
-  //   tags: [
-  //     { _id: 1, name: "python" },
-  //     { _id: 2, name: "sql" },
-  //   ],
-  //   author: "niabb",
-  //   upvotes: 10,
-  //   views: 100,
-  //   answer: 2,
-  //   createAt: "2023-12-14T12:00:00.000Z",
-  // },
-  // {
-  //   _id: 2,
-  //   title: "title_2",
-  //   tags: [
-  //     { _id: 1, name: "node" },
-  //     { _id: 2, name: "mongodb" },
-  //   ],
-  //   author: "niabb",
-  //   upvotes: 10,
-  //   views: 100,
-  //   answer: 2,
-  //   createAt: "2023-12-14T12:00:00.000Z",
-  // },
-];
+const questions: TQuestionCardProps[] = Array.from({ length: 5 }, (_, index) =>
+  generateDummyQuestion(index + 1)
+);
 
 export default async function Home() {
   return (
@@ -67,7 +45,17 @@ export default async function Home() {
       <div className="mt-10 flex w-full flex-col gap-6">
         {questions.length > 0 ? (
           questions.map((question) => (
-            <div key={question._id}>{question.title}</div>
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              author={question.author}
+              upvotes={question.upvotes}
+              views={question.views}
+              answer={question.answer}
+              createAt={question.createAt}
+            />
           ))
         ) : (
           <NoResult

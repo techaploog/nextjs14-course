@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 type TRenderTagProps = {
-  _id: number;
+  _id: string;
   name: string;
   totalQuestions?: number;
   showCount?: boolean;
