@@ -4,7 +4,7 @@ import { Filter } from "@/components/shared/filter";
 import { LocalSearchBar, NoResult } from "@/components/shared/search";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants";
-import { generateDummyQuestion } from "@/lib/utils/dummy_generator";
+import { generateDummyQuestion } from "@/lib/mock_generator";
 import { TQuestionCardProps } from "@/types";
 import Link from "next/link";
 
