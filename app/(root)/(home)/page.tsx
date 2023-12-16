@@ -4,15 +4,12 @@ import { Filter } from "@/components/shared/filter";
 import { LocalSearchBar, NoResult } from "@/components/shared/search";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants";
-import { generateDummyQuestion } from "@/lib/mock_generator";
-import { TQuestionCardProps } from "@/types";
+import { getQuestions } from "@/lib/actions";
 import Link from "next/link";
 
-const questions: TQuestionCardProps[] = Array.from({ length: 5 }, (_, index) =>
-  generateDummyQuestion(index + 1)
-);
-
 export default async function Home() {
+  const result = await getQuestions({});
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -43,8 +40,8 @@ export default async function Home() {
       <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions.length > 0 ? (
+          result.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -53,8 +50,8 @@ export default async function Home() {
               author={question.author}
               upvotes={question.upvotes}
               views={question.views}
-              answer={question.answer}
-              createAt={question.createAt}
+              answers={question.answers}
+              createdAt={question.createdAt}
             />
           ))
         ) : (

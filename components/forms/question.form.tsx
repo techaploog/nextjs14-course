@@ -56,6 +56,7 @@ export const QuestionForm = ({ mongoUserId }: TQuesionFormProps) => {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
+        path: pathname,
       });
 
       router.push("/");

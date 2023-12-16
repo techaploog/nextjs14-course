@@ -12,6 +12,6 @@ export type TQuestionCardProps = {
   };
   upvotes: number;
   views: number;
-  answer: Array<object>;
-  createAt: Date;
+  answers: Array<object>;
+  createdAt: Date;
 };
