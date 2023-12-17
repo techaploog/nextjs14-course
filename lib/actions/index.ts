@@ -1,2 +1,3 @@
-export * from "./question.action";
-export * from "./user.action";
+export * from "./question.actions";
+export * from "./user.actions";
+export * from "./tag.actions";
