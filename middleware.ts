@@ -4,15 +4,18 @@ import { authMiddleware } from "@clerk/nextjs";
 // Please edit this to allow other routes to be public as needed.
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your Middleware
 
-const publicRoutes = ["/", "/sign-in", "/sign-up", "/api/webhook"];
-
 export default authMiddleware({
-  publicRoutes,
-  // afterAuth(auth,req,evt) {
-  //   if (!auth.userId && !auth.isPublicRoute) {
-  //     return redirectToSignIn({ returnBackUrl: req.url });
-  //   }
-  // }
+  publicRoutes: [
+    "/",
+    "/api/webhook",
+    "/question/:id",
+    "/tags",
+    "/tags/:id",
+    "/profile/:id",
+    "/community",
+    "/jobs",
+  ],
+  ignoredRoutes: ["/api/webhook", "/api/chargpt"],
 });
 
 export const config = {
