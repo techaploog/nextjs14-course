@@ -14,6 +14,7 @@ type TLocalSearchBarProps = {
 };
 
 export const LocalSearchBar = (props: TLocalSearchBarProps) => {
+  // eslint-disable-next-line no-unused-vars
   const { route, iconPosition, imgSrc, placeholder, otherClasses } = props;
   return (
     <div
