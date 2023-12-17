@@ -1,14 +1,11 @@
 import { QuestionForm } from "@/components/forms";
 import { getUserById } from "@/lib/actions";
-// import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const AskQuestionPage = async () => {
-  // const {userId} = auth();
-
-  // * use this dummy clerkId for dev.
-  const userId = "123456";
+  const { userId } = auth();
 
   if (!userId) redirect("/sign-in");
 
