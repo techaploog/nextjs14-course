@@ -2,7 +2,11 @@
 
 import { Question, Tag, User } from "@/database";
 import { connectToDatabase } from "../utils";
-import { CreateQuestionParams, GetQuestionsParams } from "./share.types";
+import {
+  CreateQuestionParams,
+  GetQuestionByIdParams,
+  GetQuestionsParams,
+} from "./share.types";
 import { revalidatePath } from "next/cache";
 
 export async function getQuestions(params: GetQuestionsParams) {
@@ -44,5 +48,25 @@ export async function createQuestion(params: CreateQuestionParams) {
     revalidatePath(path);
   } catch (error: any) {
     console.log(error.message);
+  }
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    connectToDatabase();
+    const { questionId } = params;
+
+    const question = await Question.findById(questionId)
+      .populate({ path: "tags", model: Tag, select: "_id name" })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture",
+      });
+
+    return question;
+  } catch (error: any) {
+    console.log(error.message);
+    throw error;
   }
 }
