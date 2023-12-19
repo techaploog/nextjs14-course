@@ -1,13 +1,24 @@
+import { AnswerForm } from "@/components/forms";
 import { Metric } from "@/components/shared/metric";
 import { ParseHTML } from "@/components/shared/parse-html";
-import { getQuestionById } from "@/lib/actions";
+import { RenderTag } from "@/components/shared/render-tag";
+import { ITag } from "@/database";
+import { getQuestionById, getUserById } from "@/lib/actions";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 const QuestionInfoPage = async ({ params, searchParams }) => {
   const result = await getQuestionById({ questionId: params.id });
+  const { userId: clerkId } = auth();
+
+  let mongoUser;
+
+  if (clerkId) {
+    mongoUser = await getUserById({ userId: clerkId });
+  }
 
   return (
     <>
@@ -62,6 +73,23 @@ const QuestionInfoPage = async ({ params, searchParams }) => {
       </div>
 
       <ParseHTML data={result.content} />
+
+      <div className="mt-8 flex flex-wrap gap-2">
+        {result.tags.map((tag: ITag) => (
+          <RenderTag
+            key={tag._id}
+            _id={tag._id}
+            name={tag.name}
+            showCount={false}
+          />
+        ))}
+      </div>
+
+      <AnswerForm
+        question={result.content}
+        questionId={JSON.stringify(result._id)}
+        authorId={JSON.stringify(mongoUser._id)}
+      />
     </>
   );
 };
