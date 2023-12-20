@@ -6,7 +6,7 @@ export interface IAnswer extends Document {
   content: string;
   upVotes: Schema.Types.ObjectId[];
   downVotes: Schema.Types.ObjectId[];
-  createdOn: Date;
+  createdAt: Date;
 }
 
 const AnswerSchema = new Schema<IAnswer>({
@@ -15,7 +15,7 @@ const AnswerSchema = new Schema<IAnswer>({
   content: { type: String, required: true },
   upVotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   downVotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  createdOn: { type: Date, default: Date.now() },
+  createdAt: { type: Date, default: Date.now() },
 });
 
 export const Answer = models.Answer || model<IAnswer>("Answer", AnswerSchema);

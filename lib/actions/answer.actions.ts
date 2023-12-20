@@ -1,8 +1,12 @@
 "use server";
 
-import { Answer, Question } from "@/database";
+import { Answer, Question, User } from "@/database";
 import { connectToDatabase } from "../utils";
-import { CreateAnswerParams } from "./share.types";
+import {
+  AnswerVoteParams,
+  CreateAnswerParams,
+  GetAnswersParams,
+} from "./share.types";
 import { revalidatePath } from "next/cache";
 
 export async function createAnswer(params: CreateAnswerParams) {
@@ -27,6 +31,97 @@ export async function createAnswer(params: CreateAnswerParams) {
     revalidatePath(path);
   } catch (error: any) {
     console.log(error.message);
+    throw error;
+  }
+}
+
+export async function getAnswers(params: GetAnswersParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId } = params;
+
+    const answers = await Answer.find({ question: questionId })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture",
+      })
+      .sort({ createdAt: -1 });
+
+    return { answers };
+  } catch (error: any) {
+    console.log(error.message);
+    throw error;
+  }
+}
+
+export async function upvoteAnswer(params: AnswerVoteParams) {
+  try {
+    connectToDatabase();
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upVotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downVotes: userId },
+        $push: { upVotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upVotes: userId } };
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // TODO: update author's reputation
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log("[ERROR]", error.message);
+    throw error;
+  }
+}
+
+export async function downvoteAnswer(params: AnswerVoteParams) {
+  try {
+    connectToDatabase();
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downVotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upVotes: userId },
+        $push: { downVotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downVotes: userId } };
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // TODO: update author's reputation
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log("[ERROR]", error.message);
     throw error;
   }
 }

@@ -1,7 +1,9 @@
 import { AnswerForm } from "@/components/forms";
+import { AllAnswers } from "@/components/shared/all-answers";
 import { Metric } from "@/components/shared/metric";
 import { ParseHTML } from "@/components/shared/parse-html";
 import { RenderTag } from "@/components/shared/render-tag";
+import { Votes } from "@/components/shared/votes";
 import { ITag } from "@/database";
 import { getQuestionById, getUserById } from "@/lib/actions";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
@@ -10,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const QuestionInfoPage = async ({ params, searchParams }) => {
+const QuestionInfoPage = async ({ params }: { params: { id: string } }) => {
   const result = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
 
@@ -40,7 +42,18 @@ const QuestionInfoPage = async ({ params, searchParams }) => {
             </p>
           </Link>
 
-          <div className="flex justify-end">VOTING</div>
+          <div className="flex justify-end">
+            <Votes
+              type="question"
+              itemId={JSON.stringify(result._id)}
+              userId={JSON.stringify(mongoUser._id)}
+              upvotes={result.upVotes.length}
+              hasupVoted={result.upVotes.includes(mongoUser._id)}
+              downvotes={result.downVotes.length}
+              hasdownVoted={result.downVotes.includes(mongoUser._id)}
+              hasSaved={mongoUser?.saved.includes(result._id)}
+            />
+          </div>
         </div>
 
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
@@ -84,6 +97,12 @@ const QuestionInfoPage = async ({ params, searchParams }) => {
           />
         ))}
       </div>
+
+      <AllAnswers
+        questionId={result._id}
+        userId={mongoUser._id}
+        totalAnswers={result.answers.length}
+      />
 
       <AnswerForm
         question={result.content}

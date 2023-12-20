@@ -6,6 +6,7 @@ import {
   CreateQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
+  QuestionVoteParams,
 } from "./share.types";
 import { revalidatePath } from "next/cache";
 
@@ -67,6 +68,76 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
     return question;
   } catch (error: any) {
     console.log(error.message);
+    throw error;
+  }
+}
+
+export async function upvoteQuestion(params: QuestionVoteParams) {
+  try {
+    connectToDatabase();
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upVotes: userId } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downVotes: userId },
+        $push: { upVotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upVotes: userId } };
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // TODO: update author's reputation
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log("[ERROR]", error.message);
+    throw error;
+  }
+}
+
+export async function downvoteQuestion(params: QuestionVoteParams) {
+  try {
+    connectToDatabase();
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downVotes: userId } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upVotes: userId },
+        $push: { downVotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downVotes: userId } };
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // TODO: update author's reputation
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log("[ERROR]", error.message);
     throw error;
   }
 }
