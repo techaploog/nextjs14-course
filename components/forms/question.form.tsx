@@ -22,6 +22,7 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "@/context";
 
 const type: any = "create";
 
@@ -31,6 +32,7 @@ interface TQuesionFormProps {
 
 export const QuestionForm = ({ mongoUserId }: TQuesionFormProps) => {
   const editorRef = useRef(null);
+  const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -173,6 +175,8 @@ export const QuestionForm = ({ mongoUserId }: TQuesionFormProps) => {
                       "bold italic forecolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
