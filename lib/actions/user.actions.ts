@@ -5,10 +5,25 @@ import { connectToDatabase } from "../utils";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
   GetUserByIdParams,
   UpdateUserParams,
 } from "./share.types";
 import { revalidatePath } from "next/cache";
+
+export async function getAllUsers(params: GetAllUsersParams) {
+  try {
+    connectToDatabase();
+    // const {page=1,pagesize =20,filter,searchQuery} = params;
+
+    const users = await User.find({}).sort({ createdAt: -1 });
+
+    return { users };
+  } catch (error: any) {
+    console.log("[ERROR]", error.message);
+    throw error;
+  }
+}
 
 export async function getUserById(params: GetUserByIdParams) {
   try {
